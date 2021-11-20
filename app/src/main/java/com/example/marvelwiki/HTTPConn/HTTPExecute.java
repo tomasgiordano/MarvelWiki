@@ -4,8 +4,8 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.example.marvelwiki.Configurations.Config;
-import com.example.marvelwiki.Configurations.IConfig;
 import com.example.marvelwiki.Entities.MarvelCharacter;
+import com.example.marvelwiki.Entities.Url;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,6 +57,21 @@ public class HTTPExecute extends Thread{
 
             character.setName(marvelObject.getString("name"));
             character.setImageUrl(_config.BuildUrlWithoutParameters(marvelObject.getJSONObject("thumbnail").getString("path")+"/portrait_fantastic"+"."+extension));
+            character.setDetail(marvelObject.getString("description"));
+            character.setId(marvelObject.getInt("id"));
+
+            JSONArray jsonArrayItems = marvelObject.getJSONArray("urls");
+
+            for(int j=0; j < jsonArrayItems.length(); j++){
+
+                Url url = new Url();
+                JSONObject urlsObject = jsonArrayItems.getJSONObject(j);
+
+                url.setType(urlsObject.getString("type"));
+                url.setUrl(urlsObject.getString("url"));
+
+                character.addUrl(url);
+            }
 
             characters.add(character);
         }

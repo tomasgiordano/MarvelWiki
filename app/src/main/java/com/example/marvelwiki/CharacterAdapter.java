@@ -1,18 +1,19 @@
 package com.example.marvelwiki;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.marvelwiki.Entities.MarvelCharacter;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterViewHolder>{
         this.onCharacterListener = onCharacterListener;
         this.handler = handler;
         this.context = context;
+
     }
 
     @NonNull
@@ -47,11 +49,24 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterViewHolder>{
 
         MarvelCharacter p = this.characters.get(position);
 
-        holder.name.setText(p.getName());
-        new FetchImage(p.getImageUrl(),handler,context,holder).start();
+        Picasso.get()
+                .load(p.getImageUrl())
+                .resize(300, 450)
+                .centerCrop()
+                .into(holder.characterImage);
 
-        //holder.characterImage.setImageBitmap();
-        //Picasso.get().load(p.getImageUrl()).into(holder.characterImage);
+        holder.name.setText(p.getName());
+    }
+
+    private boolean hasImage(@NonNull ImageView view) {
+        Drawable drawable = view.getDrawable();
+        boolean hasImage = (drawable != null);
+
+        if (hasImage && (drawable instanceof BitmapDrawable)) {
+            hasImage = ((BitmapDrawable)drawable).getBitmap() != null;
+        }
+
+        return hasImage;
     }
 
     @Override

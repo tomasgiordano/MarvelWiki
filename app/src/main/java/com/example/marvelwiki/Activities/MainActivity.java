@@ -1,4 +1,4 @@
-package com.example.marvelwiki;
+package com.example.marvelwiki.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -6,25 +6,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.hardware.biometrics.BiometricManager;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
+import com.example.marvelwiki.CharacterAdapter;
 import com.example.marvelwiki.Configurations.Config;
 import com.example.marvelwiki.Entities.MarvelCharacter;
 import com.example.marvelwiki.HTTPConn.HTTPExecute;
+import com.example.marvelwiki.MyApplication;
+import com.example.marvelwiki.R;
 
 import java.util.ArrayList;
 
@@ -74,13 +74,9 @@ public class MainActivity extends AppCompatActivity implements CharacterAdapter.
 
             @Override
             public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
-                //if (s != null && s.length() > 0) {
-                    //final char lastKey = s.charAt(s.length()-1);
-                    //searchText = searchText + String.valueOf(lastKey);
-                    searchText = editText.getText().toString();
-                    HTTPExecute myThread = new HTTPExecute(handler,_config,searchText);
-                    myThread.start();
-                //}
+                searchText = editText.getText().toString();
+                HTTPExecute myThread = new HTTPExecute(handler,_config,searchText);
+                myThread.start();
             }
 
             @Override
@@ -99,9 +95,17 @@ public class MainActivity extends AppCompatActivity implements CharacterAdapter.
         myThread.start();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCharacterClick(int position) {
-
+        Intent intent = new Intent(this, CharacterDetailActivity.class);
+        intent.putExtra("CharacterName", myApplication.getCharacterList().get(position).getName());
+        intent.putExtra("CharacterDetail", myApplication.getCharacterList().get(position).getDetail());
+        intent.putExtra("CharacterImageURL", myApplication.getCharacterList().get(position).getImageUrl());
+        intent.putExtra("UrlDetail", myApplication.getCharacterList().get(position).getDetailUrl());
+        intent.putExtra("UrlWiki", myApplication.getCharacterList().get(position).getWikiUrl());
+        intent.putExtra("UrlComics",myApplication.getCharacterList().get(position).getComicLinkUrl());
+        startActivity(intent);
     }
 
     @Override
